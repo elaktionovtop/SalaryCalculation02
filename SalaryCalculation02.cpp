@@ -96,10 +96,47 @@ public:
 
 class SalaryWorker : public Employee
 {
+private:
+    double salary;
+    double bonus;
 public:
     SalaryWorker(const string& firstName, const string& lastName)
         : Employee(firstName, lastName)
+    { }
+
+    SalaryWorker(const string& firstName, const string& lastName,
+        double salary, double bonus)
+        : Employee(firstName, lastName)
     {
+        setSalary(salary);
+        setBonus(bonus);
+    }
+
+    void setSalary(double salary)
+    {
+        this->salary = salary < 0.0 ? 0.0 : salary;
+    }
+
+    double getSalary() const
+    {
+        return salary;
+    }
+
+    void setBonus(double bonus)
+    {
+        this->bonus = bonus < 0.0 ? 0.0 : bonus;
+    }
+
+    double getBonus() const
+    {
+        return bonus;
+    }
+
+    virtual double calculateBonus() const = 0;
+
+    double calculateSalary() const override
+    {
+        return getSalary() + calculateBonus();
     }
 };
 
@@ -115,6 +152,11 @@ public:
     {
         return 0;
     }
+    
+    double calculateBonus() const override
+    {
+        return 0;
+    }
 };
 
 class Manager : public SalaryWorker
@@ -126,6 +168,11 @@ public:
     }
 
     double calculateSalary() const override
+    {
+        return 0;
+    }
+
+    double calculateBonus() const override
     {
         return 0;
     }
