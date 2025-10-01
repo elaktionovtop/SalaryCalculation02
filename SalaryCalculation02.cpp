@@ -142,39 +142,87 @@ public:
 
 class Salesman : public SalaryWorker
 {
+private:
+    double planPercentage;
 public:
-    Salesman(const string& firstName, const string& lastName)
-        : SalaryWorker(firstName, lastName)
+    Salesman(const string& firstName, const string& lastName,
+        double salary, double bonus, double planPercentage)
+        : SalaryWorker(firstName, lastName, salary, bonus)
     {
+        setPercentage(planPercentage);
     }
 
-    double calculateSalary() const override
+    void setPercentage(double planPercentage)
     {
-        return 0;
+        this->planPercentage = planPercentage < 0.0 ? 0.0 : planPercentage;
     }
-    
+
+    double getPercentage() const
+    {
+        return planPercentage;
+    }
+
     double calculateBonus() const override
     {
-        return 0;
+        return getBonus() * planPercentage / 100;
+    }
+
+    virtual void display() const override
+    {
+        Employee::display();
+        cout <<
+            "salary: " << getSalary() << ", bonus: " << getBonus() <<
+            ", plan percentage: " << planPercentage <<
+            ", month salary: " << calculateSalary() << endl;
     }
 };
 
 class Manager : public SalaryWorker
 {
+private:
+    const int doubleBonusClients = 100;
+    const int tripleBonusClients = 200;
+    int clientCount;
 public:
-    Manager(const string& firstName, const string& lastName)
-        : SalaryWorker(firstName, lastName)
+    Manager(const string& firstName, const string& lastName,
+        double salary, double bonus, int clientCount)
+        : SalaryWorker(firstName, lastName, salary, bonus)
     {
+        setClientCount(clientCount);
     }
 
-    double calculateSalary() const override
+    void setClientCount(int clientCount)
     {
-        return 0;
+        this->clientCount = clientCount < 0 ? 0 : clientCount;
+    }
+
+    int getClientCount() const
+    {
+        return clientCount;
     }
 
     double calculateBonus() const override
     {
-        return 0;
+        if (clientCount > tripleBonusClients)
+        {
+            return getBonus() * 3;
+        }
+
+        if (clientCount > doubleBonusClients)
+        {
+            return getBonus() * 2;
+        }
+
+        return getBonus();
+    }
+
+    virtual void display() const override
+    {
+        Employee::display();
+        cout <<
+            "salary: " << getSalary() << ", bonus: " << getBonus() <<
+            ", clients count: " << clientCount <<
+            ", month salary: " << calculateSalary() << endl;
     }
 };
 
@@ -183,11 +231,11 @@ int main()
     Employee* employees[7];
     employees[0] = new Worker("Kate", "Jordan", 30, 10);
     employees[1] = new Worker("Jack", "Peterson", 50, 10);
-    employees[2] = new Salesman("Peter", "Brown");
-    employees[3] = new Salesman("Antony", "Norton");
-    employees[4] = new Manager("David", "Flynn");
-    employees[5] = new Manager("Marian", "Wood");
-    employees[6] = new Manager("Brent", "Simpson");
+    employees[2] = new Salesman("Peter", "Brown", 800, 100, 80);
+    employees[3] = new Salesman("Antony", "Norton", 1000, 100, 150);
+    employees[4] = new Manager("David", "Flynn", 2000, 200, 50);
+    employees[5] = new Manager("Marian", "Wood", 1800, 200, 120);
+    employees[6] = new Manager("Brent", "Simpson", 2200, 200, 250);
 
     for (auto item : employees)
     {
